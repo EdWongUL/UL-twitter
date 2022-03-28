@@ -1,0 +1,5 @@
+As per the video, there should be two tabs, one to show the list of tweets and one to submit a new tweet.
+The side bar should show a list of all the hashtags used in the tweets.
+Extra points if you can make the side bar hashtags filter the list of tweets when you click on them (I didn’t have time to do that bit lol)
+
+I originally intended this to be client side only, but maybe you could store the tweets in an api?
