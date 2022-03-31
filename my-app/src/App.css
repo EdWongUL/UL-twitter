@@ -1,0 +1,341 @@
+.App {
+  color: rgba(255, 255, 255, 1);
+  font-family: "Source Sans Pro";
+  box-sizing: content-box;
+}
+
+.container {
+  height: 100%;
+  min-height: 1000px;
+  width: 100%;
+  display: inline-flex;
+  grid-template-columns: 1fr 3fr 1fr;
+  background: rgba(0, 0, 0, 1);
+  justify-content: center;
+}
+
+/*-------------------*/
+
+.leftSideBar {
+  flex-basis: 350px;
+}
+
+/*-------------------*/
+
+.centerBar {
+  flex-basis: 600px;
+  border: 1px solid rgba(47, 51, 54, 1);
+}
+
+.homeHeader {
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 24px;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(47, 51, 54, 1);
+}
+
+.whatsHappening {
+  display: inline-grid;
+  grid-template-areas:
+    "DP input"
+    ". tweet";
+  padding: 10px 16px 0px 16px;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+  width: 100%;
+  border-bottom: 1px solid rgba(47, 51, 54, 1);
+  margin-bottom: 12px;
+
+  grid-template-columns: 65px auto;
+}
+
+img.DP {
+  height: 48px;
+  width: 48px;
+  grid-area: DP;
+}
+
+img.DP.myDP {
+}
+
+.whatsHappeningInput {
+  grid-area: input;
+  box-sizing: border-box;
+  /*width: 450px;*/
+  width: 100%;
+  min-height: 90px;
+  border-bottom: 1px solid rgba(47, 51, 54, 1);
+  padding-bottom: 18px;
+}
+
+textarea {
+  width: 100%;
+  min-height: 90px;
+  height: auto;
+  background: rgba(0, 0, 0, 1);
+  border: none;
+  color: rgba(255, 255, 255, 1);
+  resize: none;
+
+  font-family: "Source Sans Pro";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 24px;
+
+  outline: none;
+
+  overflow-wrap: break-word;
+  /*overflow:hidden;*/
+}
+
+textarea::placeholder {
+  color: rgba(110, 118, 125, 1);
+}
+
+textarea::focus {
+  border: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 999px;
+}
+
+.whatsHappeningButton {
+  justify-self: right;
+  grid-area: tweet;
+  margin: 7px;
+}
+
+.tweetButton {
+  background: rgba(29, 161, 242, 1);
+  width: 74px;
+  height: 40px;
+
+  color: rgba(255, 255, 255, 1);
+  font-size: 15px;
+  line-height: 18px;
+}
+
+/*-------------------*/
+
+.newTweet {
+  display: inline-grid;
+  grid-template-areas:
+    "DP header"
+    "DP content"
+    ". links";
+  padding: 20px 16px 30px 16px;
+  box-sizing: border-box;
+  width: 100%;
+  border-bottom: 1px solid rgba(47, 51, 54, 1);
+  border-top: 1px solid rgba(47, 51, 54, 1);
+  grid-template-columns: 65px auto;
+}
+
+.tweetDP {
+  grid-area: DP;
+  /*margin: 12px;*/
+  width: 48px;
+}
+
+.tweetHeader {
+  grid-area: header;
+  display: inline-flex;
+  align-items: center;
+  width: 70%;
+  justify-content: space-between;
+  height: 20px;
+}
+
+.tweetContent {
+  grid-area: content;
+  padding: 12px 0px;
+}
+
+.tweetLinks {
+  grid-area: links;
+  display: flex;
+  justify-content: space-between;
+}
+
+.tweetLink {
+  display: flex;
+  width: 50px;
+  justify-content: space-between;
+}
+
+.linkButton {
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 20px;
+  width: 20px;
+  background-color: transparent;
+}
+
+.comment {
+  background-image: url(imgs/comment.svg);
+}
+
+.retweet {
+  background-image: url(imgs/retweet.svg);
+}
+
+.heart {
+  background-image: url(imgs/heart.svg);
+}
+
+.share {
+  background-image: url(imgs/share.svg);
+}
+
+.otherUser {
+  text-decoration: none;
+}
+
+/*-----------------*/
+
+.rightSideBar {
+  flex-basis: 350px;
+  padding: 5px 32px;
+}
+
+form.searchForm {
+  margin: 5px 0px;
+  width: 100%;
+  height: 90px;
+}
+
+.searchLabel {
+  display: block;
+  position: relative;
+  border-radius: 999px;
+  box-sizing: border-box;
+  width: 100%;
+  height: 50px;
+  background: #202327;
+}
+
+.searchLabel::before {
+  position: absolute;
+  top: 17px;
+  left:  22px;
+  content: url(imgs/search.svg);
+  /*height: 50px;
+  width: 100%;*/
+}
+
+input.searchInput {
+  position: absolute;
+  box-sizing: border-box;
+  color: rgba(255, 255, 255, 1);
+  background: transparent;
+  border: none;
+  width: 85%;
+  left: 15%;
+  top: 35%;
+  outline: none;
+}
+
+input::focus {
+  border: none;
+}
+
+.trendsContainer {
+  color: #d9d9d9;
+  background: #15181c;
+  border-radius: 16px;
+  padding: 11px;
+}
+
+.trendsHeader {
+  /*height: 70px;*/
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 24px;
+
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  grid-template-areas: "header settings";
+
+  border-bottom: 1px solid #6e767d;
+  width: 100%;
+}
+
+.trendsHeaderText {
+  width: 60%;
+}
+
+.trendSettings {
+  background: rgba(29, 161, 242, 0.2);
+  width: 38px;
+  height: 38px;
+  grid-area: settings;
+  background-image: url(imgs/trendSettings.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.trends {
+  display: inline-grid;
+  grid-template-areas:
+    "hashtag more"
+    "population .";
+  width: 100%;
+  /*height: 90px;*/
+  align-items: center;
+
+  padding: 25px 0px;
+  border-bottom: 1px solid #6e767d;
+}
+
+.hashtag {
+  grid-area: hashtag;
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 18px;
+}
+
+.trendElipsis {
+  justify-self: right;
+  grid-area: more;
+
+  width: 35px;
+  height: 35px;
+  background: rgba(47, 51, 54, 0.1);
+  background-image: url(imgs/trendElipsis.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  color: #6e767d;
+  font-size: 20px;
+}
+
+.trendPopulation {
+  grid-area: population;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 16px;
+  color: #6e767d;
+}
+
+.showMore {
+  margin: 16px;
+  color: rgba(29, 161, 242, 1);
+}
+
+a,
+a:visited,
+a:hover,
+a:active {
+  color: inherit;
+  text-decoration: none;
+}
+
+/*-----------------*/
