@@ -1,32 +1,19 @@
-// 1. Send images from server to clients (do not resend ones that have already been received)- send url instead!
-// 2. New tweets should be pushed to the START, not the end- can we order the tweets table by datetime instead?
-// 3. Set up request methods for trends.
-// https://imgur.com/gallery/fDZJu
-// https://i.imgur.com/oVq1gkv.jpeg
-
-// set up server
-// process.env.TZ = 'Europe/London'
+// backend api for Twottor
 
 const express = require("express");
-const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const session = require("express-session");
 
 const app = express();
-const port = 3500;
+const port = 4000;
 
 app.use(
-  cors({credentials: true, origin: true}),
   express.json(),
   session({
-    resave: false, // don't save session if unmodified
     saveUninitialized: false, // don't create session until something stored
     secret: "shhhh, very secret",
-    //cookie: {maxAge: 10000} // 10seconds of maxage for testing- actually do this later
-    cookie: { secure: false },
   })
 );
-// app.use(express.static("/public"));
 
 // Setting up the database connection
 const knex = require("knex")({
@@ -37,6 +24,7 @@ const knex = require("knex")({
   useNullAsDefault: false,
 });
 
+// set up the db
 const setUp = async () => {
   try {
     const checkUsers = await knex.schema.hasTable("users");
@@ -51,7 +39,6 @@ const setUp = async () => {
       });
 
       const salt = bcrypt.genSaltSync(10);
-
       const hash1 = bcrypt.hashSync("password1", salt);
       const hash2 = bcrypt.hashSync("password2", salt);
       const hash3 = bcrypt.hashSync("password3", salt);
@@ -231,10 +218,12 @@ const setUp = async () => {
     // }
     // ----------------
 
-    const selectUsers = await knex("users").select("*");
-    console.log(selectUsers);
+    // const selectUsers = await knex("users").select("*");
+    // console.log(selectUsers);
     // const selectTweets = await knex("tweets").select("*");
+    // console.log(selectTweets);
     // const selectTrends = await knex("trends").select("*");
+    // console.log(selectTrends);
 
     // TODO not sure if I'm doing this right or not
     const bookshelf = require("bookshelf")(knex);
@@ -259,8 +248,6 @@ const setUp = async () => {
   }
 };
 
-// if there are no more results, then we should return null so the client
-// deals with it themselves
 const getTweets = async (startingIdx = 0) => {
   try {
     const selectTweets = await knex("tweets")
@@ -340,12 +327,10 @@ app.post("/login", async (req, res) => {
         req.body.password,
         storedHash[0].password
       );
-      console.log(req.session);
       if (match) {
         req.session.user = true;
       }
-      req.session.save();
-      console.log(req.session);
+      // req.session.save();
       res.send({
         login: match,
         message: "User match",

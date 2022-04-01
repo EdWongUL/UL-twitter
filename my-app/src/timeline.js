@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import Tweet from "./tweet.js";
 
 const makeTweet = async (tweetInfo, idx, handleLinkButton, startingIdx) => {
-  // TODO turn timestamp into time since
   return (
     <Tweet
       key={idx + startingIdx}
@@ -27,7 +26,7 @@ export default function Timeline(props) {
   const handleLinkButton = async (e) => {
     const linkType = e.target.className.split(" ")[1];
     const res = await fetch(
-      `http://localhost:3500/tweets/${props.startingIdx}`,
+      `http://localhost:3000/tweets/${props.startingIdx}`,
       {
         method: "GET",
         credentials: "include",
@@ -41,24 +40,23 @@ export default function Timeline(props) {
     // replace the tweet with that current one (maybe get an idx or something?)
   };
 
-  // runs on mount and everytime the parents update state changes.
-  // Then we setUpdate as false whenever we perform an update.
   useEffect(() => {
-    getTweets();
-  }, [props.startingIdx]);
+    if (props.update){
+      props.setUpdate(false)
+      getTweets();
+    }
+  }, [props.update]);
 
   // need to change this if starting idx is not 0, then we append our results onto the current one
   const getTweets = async () => {
     const res = await fetch(
-      `http://localhost:3500/tweets/${props.startingIdx}`,
+      `http://localhost:3000/tweets/${props.startingIdx}`,
       {
         method: "GET",
         credentials: "include",
       }
     );
-    console.log(res);
     const results = await res.json();
-    console.log(results);
     if (results.length === 0) {
       props.setBottom(true);
     } else {

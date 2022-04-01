@@ -13,7 +13,7 @@ export default function WhatsHappening(props) {
   const handleClick = async (e) => {
     if (text !== "") {
       // TODO add in an error checking thing with res
-      const res = await fetch(`http://localhost:3500/`, {
+      const res = await fetch(`http://localhost:3000/`, {
         method: "POST",
         body: JSON.stringify({
           // What exactly should we send?
@@ -25,6 +25,7 @@ export default function WhatsHappening(props) {
       setText("");
       props.setStartingIdx(0);
       props.setBottom(false);
+      props.setUpdate(true);
       // .catch(console.log("FAILED TO SEND TO SERVER"));
       // add a loading icon here?
       console.log("SENDING POST");

@@ -16,11 +16,14 @@ export default function TrendContainer(props) {
   const [trends, setTrends] = useState("");
 
   useEffect(() => {
-    getTrends();
-  }, []);
+    if (props.update) {
+      getTrends();
+      props.setUpdate(false);
+    }
+  }, [props.update]);
 
   const getTrends = async () => {
-    const res = await fetch("http://localhost:3500/trends", {
+    const res = await fetch("http://localhost:3000/trends", {
       method: "GET",
     });
     const results = await res.json();

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 export default function LogIn(props) {
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch(`http://localhost:3500/login`, {
+    const res = await fetch(`http://localhost:3000/login`, {
       method: "POST",
       body: JSON.stringify({
         // What exactly should we send?
@@ -13,12 +13,17 @@ export default function LogIn(props) {
       headers: { "Content-Type": "application/json" },
     });
 
-    const loginRes = await res.json();
-    if (loginRes.login) {
-      console.log('Server accepted username and password');
-      props.setLoggingIn(false)
+    if (res.status === 500) {
+      console.log("no connection to server");
+    } else {
+      const loginRes = await res.json();
+      if (loginRes.login) {
+        console.log("Server accepted username and password");
+        props.setLoggingIn(false);
+        props.setUpdate(true);
+      }
+      console.log(loginRes);
     }
-    console.log(loginRes);
   };
 
   return (
