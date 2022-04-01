@@ -4,10 +4,12 @@ import { useState, useEffect } from "react";
 import WhatsHappening from "./whatsHappening.js";
 import Timeline from "./timeline.js";
 import TrendContainer from "./trendContainer.js";
+import LogIn from "./logIn.js";
 
 function App() {
   const [startingIdx, setStartingIdx] = useState(0);
   const [bottom, setBottom] = useState(false);
+  const [loggingIn, setLoggingIn] = useState(true);
 
   // This detects when we reach the bottom of the window
   // TODO Do we need debounce so we don't spam the server with requests?
@@ -34,7 +36,21 @@ function App() {
 
   return (
     <div className="App">
-      <div className="container">
+      <div
+        className="logInContainer"
+        style={
+          loggingIn
+            ? { opacity: "1", display: "block" }
+            : { opacity: "0", display: "none" }
+        }
+      >
+        <LogIn setLoggingIn={setLoggingIn} />
+      </div>
+
+      <div
+        className="container"
+        style={loggingIn ? { filter: "blur(4px)" } : { filter: "none" }}
+      >
         {/*Invisible side bar*/}
         <div className="leftSideBar"></div>
 
@@ -42,7 +58,10 @@ function App() {
         <div className="centerBar">
           <div className="homeHeader">Home</div>
 
-          <WhatsHappening />
+          <WhatsHappening
+            setStartingIdx={setStartingIdx}
+            setBottom={setBottom}
+          />
           <div id="timeline">
             <Timeline
               startingIdx={startingIdx}

@@ -5,13 +5,73 @@
 }
 
 .container {
-  height: 100%;
   min-height: 1000px;
   width: 100%;
   display: inline-flex;
   grid-template-columns: 1fr 3fr 1fr;
   background: rgba(0, 0, 0, 1);
   justify-content: center;
+
+  transition: filter 0.5s;
+}
+
+.logInContainer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  /*The below doesn't work because dispaly: none occurs
+  immediately. Maybe we should look into this.*/
+  /*transition: opacity 0.3s;*/
+}
+
+.logInRel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.logInAbs {
+  display: inline-grid;
+  max-width: 500px;
+  max-height: 300px;
+  position: absolute;
+  margin: 100px auto;
+  left: 0;
+  right: 0;
+  opacity: 1;
+  background: rgba(217, 217, 217, 1);
+  padding: 100px;
+  border-radius: 16px;
+  grid-template-areas:
+    "Username Password"
+    "Button Button";
+  grid-gap: 20px;
+}
+
+.username {
+  grid-area: Username;
+}
+
+.password {
+  grid-area: Password;
+}
+
+.logInButtonContainer {
+  grid-area: Button;
+  justify-content: center;
+  justify-self: center;
+}
+
+.logInButton {
+  width: 300px;
+  height: 300px;
+  color: rgba(29, 161, 242, 1);
+  background: rgba(110, 118, 125, 1);
+  cursor: pointer;
+  font-size: 100px;
+  border-radius: 1000px;
+  border: none;
 }
 
 /*-------------------*/
@@ -201,6 +261,9 @@ button {
 .rightSideBar {
   flex-basis: 350px;
   padding: 5px 32px;
+  position: sticky;
+  align-self: flex-start;
+  top: 0;
 }
 
 form.searchForm {
@@ -222,7 +285,7 @@ form.searchForm {
 .searchLabel::before {
   position: absolute;
   top: 17px;
-  left:  22px;
+  left: 22px;
   content: url(imgs/search.svg);
   /*height: 50px;
   width: 100%;*/
@@ -252,11 +315,10 @@ input::focus {
 }
 
 .trendsHeader {
-  /*height: 70px;*/
+  height: 70px;
   font-weight: 700;
   font-size: 20px;
   line-height: 24px;
-
 
   display: inline-flex;
 
@@ -292,7 +354,7 @@ input::focus {
   /*height: 90px;*/
   align-items: center;
 
-  padding: 25px 0px;
+  padding: 15px 5px;
   border-bottom: 1px solid #6e767d;
 }
 
@@ -326,7 +388,7 @@ input::focus {
 }
 
 .showMore {
-  margin: 16px;
+  margin: 10px 16px;
   color: rgba(29, 161, 242, 1);
 }
 

@@ -22,14 +22,14 @@ export default function WhatsHappening(props) {
         }),
         headers: { "Content-Type": "application/json" },
       });
-      // Cheap work around for now, just reloads the page and so just starts again
-      // 
-      window.location.reload()
       setText("");
+      props.setStartingIdx(0);
+      props.setBottom(false);
       // .catch(console.log("FAILED TO SEND TO SERVER"));
       // add a loading icon here?
+      console.log("SENDING POST");
     } else {
-      console.log('Not sending an empty tweet')
+      console.log("Not sending an empty tweet");
     }
   };
 
@@ -40,7 +40,7 @@ export default function WhatsHappening(props) {
 
   return (
     <div className="whatsHappening">
-      <img className="DP myDP" src={'https://i.imgur.com/xOLdUTa.jpeg'} />
+      <img className="DP myDP" src={"https://i.imgur.com/xOLdUTa.jpeg"} />
       <div className="whatsHappeningInput">
         <form>
           <textarea
