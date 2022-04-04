@@ -1,11 +1,4 @@
 import { useState, useEffect } from "react";
-// import myDP from "./imgs/DP1.png";
-
-// function autoGrow(element) {
-//   console.log(element);
-//   element.style.height = 'auto';
-//   element.style.height = element.scrollHeight + "px";
-// }
 
 export default function WhatsHappening(props) {
   const [text, setText] = useState("");
@@ -41,7 +34,7 @@ export default function WhatsHappening(props) {
 
   return (
     <div className="whatsHappening">
-      <img className="DP myDP" src={"https://i.imgur.com/xOLdUTa.jpeg"} />
+      <img className="DP myDP" src={props.displayPic} />
       <div className="whatsHappeningInput">
         <form>
           <textarea

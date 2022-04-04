@@ -12,6 +12,7 @@ app.use(
   session({
     saveUninitialized: false, // don't create session until something stored
     secret: "shhhh, very secret",
+    resave: true,
   })
 );
 
@@ -201,21 +202,34 @@ const setUp = async () => {
     }
 
     // LIKES THING ---
-    // const checkLikes = await knex.schema.hasTable("likes");
-    // if (!checkLikes) {
-    //   await knex.schema.createTable("likes", (table) => {
-    //     table.increments("id");
-    //     // table.key
-    //     table.integer("population");
-    //   });
+    const checkLikes = await knex.schema.hasTable("likes");
+    if (!checkLikes) {
+      await knex.schema.createTable("likes", (table) => {
+        table.integer("tweetId");
+        table.foreign("tweetId").references("tweets.id");
+        table.integer("userId");
+        table.foreign("userId").references("users.id");
+      });
 
-    //   const insertLikes = await knex("likes").insert([
-    //     {
-    //       tweetId: 9
-    //       userId: 1
-    //     },
-    //   ]);
-    // }
+      const insertLikes = await knex("likes").insert([
+        {
+          userId: 1,
+          tweetId: 9,
+        },
+        {
+          userId: 2,
+          tweetId: 9,
+        },
+        {
+          userId: 3,
+          tweetId: 9,
+        },
+        {
+          userId: 1,
+          tweetId: 6,
+        },
+      ]);
+    }
     // ----------------
 
     // const selectUsers = await knex("users").select("*");
@@ -224,6 +238,8 @@ const setUp = async () => {
     // console.log(selectTweets);
     // const selectTrends = await knex("trends").select("*");
     // console.log(selectTrends);
+    // const selectLikes = await knex("likes").select("*");
+    // console.log(selectLikes);
 
     // TODO not sure if I'm doing this right or not
     const bookshelf = require("bookshelf")(knex);
@@ -255,7 +271,9 @@ const getTweets = async (startingIdx = 0) => {
       .orderBy("timestamp", "desc")
       .offset(startingIdx)
       .limit(10)
-      .join("users", "users.id", "=", "tweets.userId");
+      .join("users", "tweets.userId", "=", "users.id");
+    // COUNT HOW MANY LIKES EACH TWEET HAS AND RETURN THIS TOO
+    console.log(selectTweets)
     return selectTweets;
   } catch (e) {
     console.log(e);
@@ -314,10 +332,10 @@ app.post("/login", async (req, res) => {
   console.log("In post request- Logging in");
 
   try {
-    const storedHash = await knex("users")
-      .select("password")
+    const getUserPWDP = await knex("users")
+      .select("password", "dp")
       .where("username", req.body.username);
-    if (storedHash.length === 0) {
+    if (getUserPWDP.length === 0) {
       res.send({ login: false, message: "User not found" });
     } else {
       // To regenerate the session simply invoke the method. Once complete,
@@ -325,15 +343,18 @@ app.post("/login", async (req, res) => {
       // and the callback will be invoked.
       const match = bcrypt.compareSync(
         req.body.password,
-        storedHash[0].password
+        getUserPWDP[0].password
       );
+      console.log(getUserPWDP);
       if (match) {
         req.session.user = true;
+        req.session.dp = getUserPWDP[0].dp;
       }
       // req.session.save();
       res.send({
         login: match,
         message: "User match",
+        dp: getUserPWDP[0].dp,
       });
     }
   } catch (e) {
@@ -356,6 +377,18 @@ app.post("/", async (req, res) => {
     res.send("SUCCESSFULLY POSTED TWEET");
   } catch (e) {
     console.log(e);
+  }
+});
+
+// for
+app.get("/relog", async (req, res) => {
+  console.log("In GET REQUEST- checking if user has already logged in:");
+  console.log(req.session.user);
+
+  if (req.session.user) {
+    res.send({ login: true, message: "already logged in", dp: req.session.dp });
+  } else {
+    res.send({ login: false, message: "Please log in" });
   }
 });
 

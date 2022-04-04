@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 
 export default function LogIn(props) {
+  const [message, setMessage] = useState('');
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const res = await fetch(`http://localhost:3000/login`, {
@@ -14,13 +16,20 @@ export default function LogIn(props) {
     });
 
     if (res.status === 500) {
+      setMessage("Error connecting to server")
       console.log("no connection to server");
+      setTimeout(() => setMessage(""), 5000)
     } else {
       const loginRes = await res.json();
       if (loginRes.login) {
         console.log("Server accepted username and password");
         props.setLoggingIn(false);
         props.setUpdate(true);
+        props.setDisplayPic(loginRes.dp)
+      } else {
+        setMessage("Incorrect username/password.")
+        console.log("Incorrect username/password.");
+        setTimeout(() => setMessage(""), 5000)
       }
       console.log(loginRes);
     }
@@ -49,6 +58,7 @@ export default function LogIn(props) {
           <div className="logInButtonContainer">
             <input type="submit" className="logInButton" value="Log In" />
           </div>
+          <div className="logInMessage">{message}</div>
         </div>
       </form>
     </div>

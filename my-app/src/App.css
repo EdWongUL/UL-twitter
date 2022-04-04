@@ -20,9 +20,7 @@
   width: 100%;
   height: 100%;
   z-index: 5;
-  /*The below doesn't work because dispaly: none occurs
-  immediately. Maybe we should look into this.*/
-  /*transition: opacity 0.3s;*/
+  display: none;
 }
 
 .logInRel {
@@ -39,14 +37,26 @@
   margin: 100px auto;
   left: 0;
   right: 0;
-  opacity: 1;
   background: rgba(217, 217, 217, 1);
   padding: 100px;
   border-radius: 16px;
   grid-template-areas:
     "Username Password"
-    "Button Button";
+    "Button Button"
+    "Status Status";
   grid-gap: 20px;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
 }
 
 .username {
@@ -72,6 +82,12 @@
   font-size: 100px;
   border-radius: 1000px;
   border: none;
+}
+
+.logInMessage {
+  justify-self: center;
+  grid-area: Status;
+  color: red;
 }
 
 /*-------------------*/
@@ -114,6 +130,7 @@ img.DP {
   height: 48px;
   width: 48px;
   grid-area: DP;
+  border-radius: 999px;
 }
 
 img.DP.myDP {
@@ -234,26 +251,212 @@ button {
   height: 20px;
   width: 20px;
   background-color: transparent;
+  padding: 0;
+  position: relative;
+}
+
+.linkImg {
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 2px solid;
 }
 
 .comment {
-  background-image: url(imgs/comment.svg);
+  content: url(imgs/comment.svg);
 }
 
 .retweet {
-  background-image: url(imgs/retweet.svg);
+  content: url(imgs/retweet.svg);
 }
 
 .heart {
-  background-image: url(imgs/heart.svg);
+  content: url(imgs/heart.svg);
 }
 
 .share {
-  background-image: url(imgs/share.svg);
+  content: url(imgs/share.svg);
+}
+
+.animated {
+  /*content: url(imgs/heart.svg);*/
+  box-sizing: border-box;
+  /*background: red;*/
+  width: 20px;
+  height: 20px;
+  animation: clickAnimation 0.5s;
+}
+
+.heart.animated {
+  content: url(imgs/heartRed.svg);
+}
+
+.retweet.animated {
+  content: url(imgs/retweetRed.svg);
+}
+
+.comment.animated {
+  content: url(imgs/commentRed.svg);
+}
+
+.share.animated {
+  content: url(imgs/shareRed.svg);
+}
+
+.bubbles {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(29, 161, 242, 1);
+  transform: scale(0);
+  transform-origin: center;
+}
+
+.bubbles.a {
+  top: -2px;
+  left: 0px;
+  height: 5px;
+  width: 5px;
+  background-color: #fdfd96;
+  animation: bubbleAnimationA 0.25s linear 0.25s forwards;
+}
+
+.bubbles.b {
+  bottom: 0px;
+  left: 0px;
+  height: 5px;
+  width: 5px;
+  background-color: #77dd77;
+  animation: bubbleAnimationB 0.25s linear 0.25s forwards;
+}
+
+.bubbles.c {
+  top: -2px;
+  right: 0px;
+  height: 5px;
+  width: 5px;
+  background-color: #9370db;
+  animation: bubbleAnimationC 0.25s linear 0.25s forwards;
+}
+
+.bubbles.d {
+  bottom: 0px;
+  right: 0px;
+  height: 5px;
+  width: 5px;
+  background-color: #6e80e6;
+  animation: bubbleAnimationD 0.25s linear 0.25s forwards;
+}
+
+/*can't get this to show for some reason*/
+.bubbles.e {
+  border: 5px solid rgba(147, 112, 219, 1);
+  height: 20px;
+  width: 20px;
+  top: 0;
+  animation: borderAnimation 0.25s linear 0.25s forwards;
+}
+
+@keyframes clickAnimation {
+  0% {
+    transform: scale(1);
+  }
+
+  33% {
+    transform: scale(0.2);
+  }
+
+  66% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes bubbleAnimationA {
+  0% {
+    transform: translateX(0px) translateY(0px) scale(0);
+  }
+
+  33% {
+    transform: translateX(-5px) translateY(-5px) scale(1);
+  }
+
+  100% {
+    transform: translateX(-5px) translateY(-5px) scale(0);
+  }
+}
+
+@keyframes bubbleAnimationB {
+  0% {
+    transform: translateX(0px) translateY(0px) scale(0);
+  }
+
+  33% {
+    transform: translateX(-5px) translateY(5px) scale(1);
+  }
+
+  100% {
+    transform: translateX(-5px) translateY(5px) scale(0);
+  }
+}
+
+@keyframes bubbleAnimationC {
+  0% {
+    transform: translateX(0px) translateY(0px) scale(0);
+  }
+
+  33% {
+    transform: translateX(5px) translateY(-5px) scale(1);
+  }
+
+  100% {
+    transform: translateX(5px) translateY(-5px) scale(0);
+  }
+}
+
+@keyframes bubbleAnimationD {
+  0% {
+    transform: translateX(0px) translateY(0px) scale(0);
+  }
+
+  33% {
+    transform: translateX(5px) translateY(5px) scale(1);
+  }
+
+  100% {
+    transform: translateX(5px) translateY(5px) scale(0);
+  }
+}
+
+@keyframes borderAnimation {
+  0% {
+    border-color: rgba(147, 112, 219, 0);
+  }
+
+  33% {
+    border-color: rgba(147, 112, 219, 1);
+  }
+
+  100% {
+    border-color: rgba(147, 112, 219, 0);
+  }
 }
 
 .otherUser {
   text-decoration: none;
+}
+
+.footerContainer {
+  display: inline-grid;
+  padding: 20px 16px 30px 16px;
+  box-sizing: border-box;
+  width: 100%;
+  border-bottom: 1px solid rgba(47, 51, 54, 1);
+  border-top: 1px solid rgba(47, 51, 54, 1);
+  align-items: center;
+  justify-content: center;
 }
 
 /*-----------------*/

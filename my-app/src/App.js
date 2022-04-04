@@ -1,5 +1,6 @@
 import "./App.css";
 import { useState, useEffect } from "react";
+import ReactCSSTransitionGroup from "react-transition-group";
 
 import WhatsHappening from "./whatsHappening.js";
 import Timeline from "./timeline.js";
@@ -13,47 +14,42 @@ function App() {
   // eventually been sent).
   const [bottom, setBottom] = useState(false);
   // boolean indicating if the log in screen is in use. Once the
-  // user has logged in, 
+  // user has logged in,
   const [loggingIn, setLoggingIn] = useState(true);
   // update flag on when to fetch tweets and trends
   const [update, setUpdate] = useState(false);
+  const [displayPic, setDisplayPic] = useState(
+    "https://merriam-webster.com/assets/mw/images/article/art-wap-landing-mp-lg/egg-3442-4c317615ec1fd800728672f2c168aca5@1x.jpg"
+  );
 
-  // This detects when we reach the bottom of the window
-  // TODO Do we need debounce so we don't spam the server with requests?
-  // TODO only add a listener when the user has logged in
-  const isBottom = (el) => {
-    return el.getBoundingClientRect().bottom <= window.innerHeight;
-  };
-
-  useEffect(() => {
-    window.addEventListener("scroll", trackScrolling);
-    return () => window.removeEventListener("scroll", trackScrolling);
-  });
-
-  const trackScrolling = () => {
-    const wrappedElement = document.getElementById("timeline");
-    if (isBottom(wrappedElement)) {
-      if (!bottom && !loggingIn) {
-        setStartingIdx(startingIdx + 10);
-        setUpdate(true);
-      } else {
-        console.log("reached bottom of the timeline");
-        // TODO Add something that shows you've reached the bottom
-      }
+  // check if the client has already logged in before
+  useEffect(async () => {
+    const res = await fetch('http://localhost:3000/relog', {
+      method: "GET",
+      credentials: "include",
+    });
+    const resJ = await res.json();
+    if (!resJ.login) {
+      // not already logged in
+      setLoggingIn(true)
+    } else {
+      setLoggingIn(false)
+      setUpdate(true);
+      setDisplayPic(resJ.dp)
     }
-  };
+  }, []);
 
   return (
     <div className="App">
       <div
         className="logInContainer"
-        style={
-          loggingIn
-            ? { opacity: "1", display: "block" }
-            : { opacity: "0", display: "none" }
-        }
+        style={loggingIn ? {display: "block"} : { animation: "fadeOut 1s forwards" }}
       >
-        <LogIn setLoggingIn={setLoggingIn} setUpdate={setUpdate} />
+        <LogIn
+          setLoggingIn={setLoggingIn}
+          setUpdate={setUpdate}
+          setDisplayPic={setDisplayPic}
+        />
       </div>
 
       <div
@@ -71,13 +67,17 @@ function App() {
             setStartingIdx={setStartingIdx}
             setBottom={setBottom}
             setUpdate={setUpdate}
+            displayPic={displayPic}
           />
           <div id="timeline">
             <Timeline
               startingIdx={startingIdx}
+              setStartingIdx={setStartingIdx}
+              bottom={bottom}
               setBottom={setBottom}
               update={update}
               setUpdate={setUpdate}
+              loggingIn={loggingIn}
             />
           </div>
         </div>
