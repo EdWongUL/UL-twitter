@@ -1,39 +1,16 @@
 import { useState } from "react";
+import "./centerPanel.css";
 
-import comment from "./imgs/comment.svg";
-import heart from "./imgs/heart.svg";
-import retweet from "./imgs/retweet.svg";
-import share from "./imgs/share.svg";
-import verified from "./imgs/verified.svg";
+import comment from "../imgs/comment.svg";
+import heart from "../imgs/heart.svg";
+import retweet from "../imgs/retweet.svg";
+import share from "../imgs/share.svg";
+import verified from "../imgs/verified.svg";
 
 import Link from "./link.js";
 
 export default function Tweet(props) {
   const tweetTimeLocal = new Date(props.tweetTime + " UTC");
-
-  const handleClick = async (e) => {
-    const linkType = e.target.className.split(" ")[1];
-    console.log(linkType);
-    console.log(e.target);
-
-    if ("heart" === linkType) {
-      // trigger heart animation
-
-      const res = await fetch(
-        `http://localhost:3000/tweets/${props.startingIdx}`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
-    }
-
-    // use fetch to post a number (+1 or -1) onto the link value.
-
-    // the response will contain the new tweet's new numbers.
-
-    // replace the tweet with that current one (maybe get an idx or something?)
-  };
 
   const getTimeSince = (tweetTime) => {
     const then = Date.parse(tweetTime);
@@ -70,9 +47,16 @@ export default function Tweet(props) {
 
       <div className="tweetHeader">
         <h3>{props.username}</h3>
-        <img src={props.verifiedBool === 0 ? verified : undefined} />
-        <h4>@{props.handle}</h4>
-        &middot;
+        <img
+          src={verified}
+          style={
+            props.verifiedBool === 0
+              ? { display: "block" }
+              : { display: "none" }
+          }
+        />
+        <h4>@{props.authorHandle}</h4>
+        <p className="grey">&middot;</p>
         <div className="tweetTime" title={tweetTimeLocal}>
           {getTimeSince(tweetTimeLocal)}
         </div>
@@ -81,10 +65,41 @@ export default function Tweet(props) {
       <div className="tweetContent">{props.content}</div>
 
       <div className="tweetLinks">
-        <Link value={props.comment} linkType={'comment'}/>
-        <Link value={props.retweet} linkType={'retweet'}/>
-        <Link value={props.heart} linkType={'heart'}/>
-        <Link value={props.share} linkType={'share'}/>
+        <Link
+          value={props.comment}
+          linkType={"comments"}
+          tweetId={props.id}
+          handle={props.handle}
+          setLoggingIn={props.setLoggingIn}
+          guest={props.guest}
+          userInteraction={props.userCommentsInteraction}
+        />
+        <Link
+          value={props.retweet}
+          linkType={"retweet"}
+          tweetId={props.id}
+          handle={props.handle}
+          setLoggingIn={props.setLoggingIn}
+          guest={props.guest}
+          userInteraction={props.userRetweetInteraction}
+        />
+        <Link
+          value={props.heart}
+          linkType={"likes"}
+          tweetId={props.id}
+          handle={props.handle}
+          setLoggingIn={props.setLoggingIn}
+          guest={props.guest}
+          userInteraction={props.userLikeInteraction}
+        />
+        <Link
+          value={props.share}
+          linkType={"share"}
+          tweetId={props.id}
+          handle={props.handle}
+          setLoggingIn={props.setLoggingIn}
+          guest={props.guest}
+        />
       </div>
     </div>
   );

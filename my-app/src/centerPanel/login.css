@@ -1,0 +1,96 @@
+
+.logInContainer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  display: none;
+}
+
+.logInRel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.logInAbs {
+  display: inline-grid;
+  max-width: 500px;
+  max-height: 300px;
+  position: absolute;
+  margin: 100px auto;
+  left: 0;
+  right: 0;
+  background: rgba(217, 217, 217, 1);
+  padding: 100px;
+  border-radius: 16px;
+  grid-template-areas:
+    "Username Password"
+    "Button Button"
+    "Status Status";
+  grid-gap: 20px;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.username {
+  grid-area: Username;
+}
+
+.password {
+  grid-area: Password;
+}
+
+.logInButtonContainer {
+  grid-area: Button;
+  justify-content: center;
+  justify-self: center;
+}
+
+.logInButton {
+  /*width: 300px;*/
+  width: 100%;
+  height: 300px;
+  color: rgba(29, 161, 242, 1);
+  background: rgba(110, 118, 125, 1);
+  cursor: pointer;
+  font-size: 100px;
+  border-radius: 1000px;
+  border: none;
+}
+
+.logInMessage {
+  justify-self: center;
+  grid-area: Status;
+  color: red;
+}
+
+.guestButtonContainer {
+  position: absolute;
+  top: 120px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 200px;
+}
+
+.guestButton {
+  width: 200px;
+  height: 50px;
+  color: rgba(29, 161, 242, 1);
+  background: rgba(110, 118, 125, 1);
+  cursor: pointer;
+  font-size: 20px;
+  border-radius: 1000px;
+  border: none;
+}

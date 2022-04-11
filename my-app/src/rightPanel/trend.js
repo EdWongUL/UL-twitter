@@ -1,5 +1,5 @@
 import { useState } from "react";
-import trendSettings from "./imgs/trendSettings.svg";
+import trendSettings from "../imgs/trendSettings.svg";
 
 export default function Trend(props) {
   return (

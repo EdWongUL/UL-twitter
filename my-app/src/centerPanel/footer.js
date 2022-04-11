@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import "./centerPanel.css";
 import Link from "./link.js";
 
 export default function Footer(props) {

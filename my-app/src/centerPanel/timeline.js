@@ -1,25 +1,8 @@
 import { useState, useEffect } from "react";
+import "./centerPanel.css";
 
 import Tweet from "./tweet.js";
 import Footer from "./footer.js";
-
-const makeTweet = async (tweetInfo, idx, startingIdx) => {
-  return (
-    <Tweet
-      key={idx + startingIdx}
-      // Add tweet id from db
-      tweetDP={tweetInfo.dp}
-      username={tweetInfo.userName}
-      handle={tweetInfo.handle}
-      verifiedBool={tweetInfo.verified}
-      tweetTime={tweetInfo.timestamp}
-      comment={tweetInfo.comment}
-      retweet={tweetInfo.retweet}
-      heart={tweetInfo.heart}
-      content={tweetInfo.content}
-    />
-  );
-};
 
 function useDebounce(value, delay) {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -38,7 +21,7 @@ function useDebounce(value, delay) {
 }
 
 export default function Timeline(props) {
-  const [tweets, setTweets] = useState("");
+  const [tweets, setTweets] = useState([]);
   // number for debouncing the trackScrolling method
   // 0 for a reset, otherwise, for every trigger the scroll state is incremented.
   const [scroll, setScroll] = useState(0);
@@ -65,25 +48,23 @@ export default function Timeline(props) {
   }, [debouncedScroll]);
 
   const trackScrolling = () => {
-    console.log("trackScrolling");
     const wrappedElement = document.getElementById("timeline");
     if (wrappedElement.getBoundingClientRect().bottom <= window.innerHeight) {
       // only trigger this if bottom hasn't been reached AND we are NOT in the loading screen
-      if ((!props.bottom && !props.loggingIn) || props.alreadyLoggedIn) {
-        console.log("Updating starting idx");
+      if (!props.bottom && !props.loggingIn) {
         props.setStartingIdx(props.startingIdx + 10);
         props.setUpdate(true);
       } else if (props.bottom) {
-        console.log("Reached bottom of the timeline.");
         // TODO Add something that shows you've reached the bottom
       } else if (props.loggingIn) {
-        console.log("Ignoring while logging in.");
       }
     }
     setScroll(0);
   };
 
   useEffect(() => {
+    console.log("UPDATE EFFECT")
+    console.log(props.update)
     if (props.update) {
       props.setUpdate(false);
       getTweets();
@@ -92,6 +73,7 @@ export default function Timeline(props) {
 
   // need to change this if starting idx is not 0, then we append our results onto the current one
   const getTweets = async () => {
+    console.log("GETTING TWEEEEEEEETS");
     const res = await fetch(
       `http://localhost:3000/tweets/${props.startingIdx}`,
       {
@@ -100,27 +82,44 @@ export default function Timeline(props) {
       }
     );
     const results = await res.json();
+    console.log(results);
     if (results.length === 0) {
       props.setBottom(true);
     } else {
-      const resultsComp = await Promise.all(
-        results.map((result, idx) => makeTweet(result, idx, props.startingIdx))
-      );
       if (props.startingIdx === 0) {
-        setTweets(resultsComp);
+        setTweets(results);
       } else {
-        // setTweets([...tweets, resultsComp]);
-        setTweets(tweets.concat(resultsComp));
+        setTweets(tweets.concat(results));
       }
     }
   };
 
   return (
     <div>
-      {tweets}
-      <Footer
-        bottom={props.bottom}
-      />
+      {tweets.map((tweetInfo) => {
+        return (
+          <Tweet
+            key={tweetInfo.tweetIdOG}
+            id={tweetInfo.tweetIdOG}
+            tweetDP={tweetInfo.dp}
+            username={tweetInfo.userName}
+            authorHandle={tweetInfo.handle} //handle of tweet
+            verifiedBool={tweetInfo.verified}
+            tweetTime={tweetInfo.timestamp}
+            comment={tweetInfo.totalComments}
+            retweet={tweetInfo.totalRetweets}
+            heart={tweetInfo.totalLikes}
+            content={tweetInfo.content}
+            handle={props.handle} // handle of client
+            setLoggingIn={props.setLoggingIn}
+            guest={props.guest}
+            userCommentsInteraction={tweetInfo.userCommentsInteraction}
+            userLikeInteraction={tweetInfo.userLikeInteraction}
+            userRetweetInteraction={tweetInfo.userRetweetInteraction}
+          />
+        );
+      })}
+      <Footer bottom={props.bottom} />
     </div>
   );
 }
