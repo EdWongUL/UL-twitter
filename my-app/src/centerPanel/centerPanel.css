@@ -17,6 +17,18 @@
   padding: 50px;
 }
 
+.handleSearch {
+  /*position under the current selection*/
+  position: absolute;
+  top: 150px;
+}
+
+.result{
+  background: black;
+  border: solid 1px grey;
+  cursor: pointer;
+}
+
 .whatsHappening {
   display: inline-grid;
   grid-template-areas:
@@ -417,3 +429,4 @@ h4 {
   align-items: center;
   justify-content: center;
 }
+

@@ -11,6 +11,7 @@ const { login } = require("./controllers/login");
 const { link } = require("./controllers/link");
 const { relog } = require("./controllers/relog");
 const { postTweet } = require("./controllers/postTweet");
+const { findUsers } = require("./controllers/findUsers");
 const { knex, setUp } = require("./knexDB");
 
 const app = express();
@@ -57,6 +58,11 @@ privateRouter.post("/link", (req, res) => {
 // private request
 privateRouter.post("/", (req, res) => {
   postTweet(knex, req, res);
+});
+
+// private request
+privateRouter.post("/findUsers", (req, res) => {
+  findUsers(knex, req, res);
 });
 
 app.listen(port, () => {

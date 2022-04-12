@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import "./centerPanel.css";
+import HandleSearch from "./handleSearch.js";
 
 // maximum length of a tweet (reduce it for testing).
 const maxLength = 100;
 
 export default function WhatsHappening(props) {
   const [text, setText] = useState("");
-  const [handles, setHandles] = useState("");
+  const [handles, setHandles] = useState(null);
+  const [handleResults, setHandleResults] = useState([]);
   const [recentHandleIdx, setRecentHandleIdx] = useState(-1);
   const [remainingChars, setRemainingChars] = useState(100);
 
@@ -26,15 +28,29 @@ export default function WhatsHappening(props) {
     return debouncedValue;
   };
 
-  const debouncedSearchTerm = useDebounce(handles, 500);
+  const debouncedSearchTerm = useDebounce(handles, 200);
 
-  useEffect(() => {
-    fetchResults();
+  useEffect(async () => {
+    await fetchResults();
   }, [debouncedSearchTerm]);
 
   const fetchResults = async () => {
-    // await
-    console.log("fetching");
+    if (handles !== null) {
+      // console.log("fetching with searchHandle: " + handles);
+      const res = await fetch(`http://localhost:3000/private/findUsers/`, {
+        method: "POST",
+        body: JSON.stringify({
+          handles: handles,
+        }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const ress = await res.json();
+      console.log(ress);
+      setHandleResults(ress.handles);
+    } else {
+      setHandleResults([]);
+    }
   };
 
   const handleClick = async (e) => {
@@ -78,20 +94,40 @@ export default function WhatsHappening(props) {
     // TODO here we can update do the remaining characters thing
   }, [text]);
 
+  const findSearchHandle = (inString, currentSelection) => {
+    // splitting between any not alphanumeric or @
+    const inStringSplit = inString.split(/[^a-zA-Z\d@]/g);
+
+    // FIND THE FIRST CHARACTER OF THE WORD WE ARE CURRENTLY IN.
+    let cumulativeTotal = 0;
+    for (let i = 0; i < inStringSplit.length; i++) {
+      const currentLength = inStringSplit[i].length;
+      if (currentLength + cumulativeTotal >= currentSelection) {
+        // TODO change this to return the full word as opposed to just the first letter
+        // ONLY IF it's the @ symbol thing
+        if (inStringSplit[i][0] === "@") {
+          return inStringSplit[i].slice(1);
+        } else {
+          return null;
+        }
+      } else {
+        cumulativeTotal += currentLength + 1;
+      }
+    }
+  };
+
   const onChange = (e) => {
     setText(e.target.value);
-    // check if there's an @ symbol- in which case bring up a list of users (fetch or cache?)
 
-    // this works going forward, but if we start removing characters, it freaks
+    // currentSelection is the position of the cursor when the latest key was pressed
+    const currentSelection = e.target.selectionStart;
+    // console.log(currentSelection);
 
-    const indices = e.target.value.matchAll('@');
+    // get current word
+    const inString = e.target.value;
 
-    let index = indices.next()
-    while(!index.done){
-      console.log(index.value.index)
-      index = indices.next()
-    }
-
+    const searchHandle = findSearchHandle(inString, currentSelection);
+    setHandles(searchHandle);
   };
 
   return (
@@ -102,6 +138,7 @@ export default function WhatsHappening(props) {
       >
         <img className="DP myDP" src={props.displayPic} />
         <div className="whatsHappeningInput">
+          <HandleSearch handleResults={handleResults} />
           <form>
             <textarea
               placeholder="What's happening?"
