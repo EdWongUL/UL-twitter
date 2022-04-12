@@ -55,7 +55,8 @@ function App() {
         className="logInContainer"
         style={
           loggingIn
-            ? { display: "block" }
+            ? // ? { animation: "fadeIn 1s forwards" }
+              { display: "block" }
             : { animation: "fadeOut 1s forwards" }
         }
       >
@@ -112,7 +113,9 @@ function App() {
                 className="searchInput"
                 placeholder="Search Twitter"
                 type="text"
-                onSubmit={(e) => {e.preventDefault()}}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                }}
               />
             </label>
           </form>

@@ -1,8 +1,41 @@
 import { useState, useEffect } from "react";
 import "./centerPanel.css";
 
+// maximum length of a tweet (reduce it for testing).
+const maxLength = 100;
+
 export default function WhatsHappening(props) {
   const [text, setText] = useState("");
+  const [handles, setHandles] = useState("");
+  const [recentHandleIdx, setRecentHandleIdx] = useState(-1);
+  const [remainingChars, setRemainingChars] = useState(100);
+
+  const useDebounce = (value, delay) => {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+
+    useEffect(() => {
+      const handler = setTimeout(() => {
+        setDebouncedValue(value);
+      }, delay);
+
+      return () => {
+        clearTimeout(handler);
+      };
+    }, [value]);
+
+    return debouncedValue;
+  };
+
+  const debouncedSearchTerm = useDebounce(handles, 500);
+
+  useEffect(() => {
+    fetchResults();
+  }, [debouncedSearchTerm]);
+
+  const fetchResults = async () => {
+    // await
+    console.log("fetching");
+  };
 
   const handleClick = async (e) => {
     console.log(e);
@@ -40,17 +73,25 @@ export default function WhatsHappening(props) {
   };
 
   useEffect(() => {
-    // console.log(`Text set to: ${text}`);
+    const length = text.length;
+    setRemainingChars(maxLength - length);
     // TODO here we can update do the remaining characters thing
   }, [text]);
 
   const onChange = (e) => {
     setText(e.target.value);
     // check if there's an @ symbol- in which case bring up a list of users (fetch or cache?)
-    if (e.target.value[e.target.value.length - 1] === "@"){
-      console.log("@SYMBOL Detected")
-      // TODO get users (use debounce so we can't spam)
+
+    // this works going forward, but if we start removing characters, it freaks
+
+    const indices = e.target.value.matchAll('@');
+
+    let index = indices.next()
+    while(!index.done){
+      console.log(index.value.index)
+      index = indices.next()
     }
+
   };
 
   return (
@@ -68,11 +109,15 @@ export default function WhatsHappening(props) {
               id="whatsHappeningText"
               value={text}
               onChange={onChange}
-              maxLength="250"
+              maxLength={"" + maxLength}
             ></textarea>
           </form>
         </div>
-        <div className="remainingCharacters">{}</div>
+        <div className="remainingCharacters">
+          {remainingChars < 0.2 * maxLength
+            ? `Remaining characters: ${remainingChars}`
+            : ""}
+        </div>
         <div className="whatsHappeningButton">
           <button className="tweetButton" onClick={(e) => handleClick(e)}>
             Tweet

@@ -92,6 +92,7 @@ input::focus {
 }
 
 .trendsHeaderText {
+  min-width: 140px;
   width: 60%;
 }
 
@@ -161,3 +162,7 @@ a:active {
 }
 
 /*-----------------*/
+
+@media only screen and (max-width: 930px) {
+  /*REDUCE TO MOBILE VIEW HERE*/
+}

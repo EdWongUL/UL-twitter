@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import "./login.css";
 
+import birdyBlue from "../imgs/birdyBlue.svg";
+
 export default function LogIn(props) {
   const [message, setMessage] = useState("");
 
@@ -82,8 +84,20 @@ export default function LogIn(props) {
 
   return (
     <div className="logInRel">
+      <div className="guestButtonContainer">
+        <input
+          type="submit"
+          className="guestButton"
+          value="X"
+          onClick={handleSubmit}
+        />
+      </div>
       <form onSubmit={handleSubmit}>
         <div className="logInAbs">
+          <div className="birdyBlue">
+            <img src={birdyBlue} />
+          </div>
+          <div className="logInHeader">Sign in to Twotter</div>
           <input
             type="text"
             id="username"
@@ -106,14 +120,6 @@ export default function LogIn(props) {
           <div className="logInMessage">{message}</div>
         </div>
       </form>
-      <div className="guestButtonContainer">
-        <input
-          type="submit"
-          className="guestButton"
-          value="Continue as Guest"
-          onClick={handleSubmit}
-        />
-      </div>
     </div>
   );
 }
