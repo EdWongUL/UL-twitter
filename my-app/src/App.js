@@ -1,12 +1,15 @@
 import "./App.css";
 import { useState, useEffect } from "react";
-import ReactCSSTransitionGroup from "react-transition-group";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import LeftPanel from "./leftPanel/leftPanel.js";
 import WhatsHappening from "./centerPanel/whatsHappening.js";
 import Timeline from "./centerPanel/timeline.js";
 import TrendContainer from "./rightPanel/trendContainer.js";
 import LogIn from "./centerPanel/logIn.js";
+import Profile from "./profile.js";
+import ProfileLikes from "./profileLikes.js";
+import Center from "./center.js";
 
 function App() {
   // idx from zero, updates by 10 everytime we reach the bottom
@@ -15,7 +18,8 @@ function App() {
   // eventually been sent).
   const [bottom, setBottom] = useState(false);
   // boolean indicating if the log in screen is in use.
-  const [loggingIn, setLoggingIn] = useState(true);
+  const [loggingIn, setLoggingIn] = useState(false);
+  const [logInBackground, setLogInBackground] = useState(true);
   // update flag on when to fetch tweets and trends
   const [update, setUpdate] = useState(false);
   const [displayPic, setDisplayPic] = useState(
@@ -23,6 +27,7 @@ function App() {
   );
   const [handle, setHandle] = useState("");
   const [guest, setGuest] = useState(false);
+  const [scrollTrack, setScrollTrack] = useState(false);
 
   // check if the client has already logged in before
   useEffect(async () => {
@@ -34,105 +39,114 @@ function App() {
       const resJ = await res.json();
       if (resJ.login || resJ.guest) {
         // user has already logged in with their credentials
-        setLoggingIn(false);
         setDisplayPic(resJ.dp);
         setHandle(resJ.handle);
         setGuest(resJ.guest);
+        setLogInBackground(false);
         setUpdate(true);
+        setScrollTrack(true);
       } else {
         // user has not logged in before (as user or guest)
         setLoggingIn(true);
       }
     } catch (e) {
       // no connection to server right?
-      setLoggingIn(true);
     }
   }, []);
 
   return (
     <div className="App">
-      <div
-        className="logInContainer"
-        style={
-          loggingIn
-            ? // ? { animation: "fadeIn 1s forwards" }
-              { display: "block" }
-            : { animation: "fadeOut 1s forwards" }
-        }
-      >
+      <BrowserRouter>
         <LogIn
+          loggingIn={loggingIn}
           setLoggingIn={setLoggingIn}
           setUpdate={setUpdate}
           setDisplayPic={setDisplayPic}
           setGuest={setGuest}
           setHandle={setHandle}
+          setLogInBackground={setLogInBackground}
+          setScrollTrack={setScrollTrack}
         />
-      </div>
 
-      <div
-        className="container"
-        style={loggingIn ? { filter: "blur(4px)" } : { filter: "none" }}
-      >
-        {/*Invisible side bar*/}
-        <LeftPanel />
+        <div
+          className="container"
+          style={logInBackground ? { filter: "blur(4px)" } : { filter: "none" }}
+        >
+          <LeftPanel />
 
-        {/*Timeline middle bit*/}
-        <div className="centerBar">
-          <div className="homeHeader">Home</div>
-
-          <WhatsHappening
-            setStartingIdx={setStartingIdx}
-            setBottom={setBottom}
-            setUpdate={setUpdate}
-            displayPic={displayPic}
-            guest={guest}
-            setLoggingIn={setLoggingIn}
-            handle={handle}
-          />
-          <div id="timeline">
-            <Timeline
-              startingIdx={startingIdx}
-              setStartingIdx={setStartingIdx}
-              bottom={bottom}
-              setBottom={setBottom}
-              update={update}
-              setUpdate={setUpdate}
-              handle={handle}
-              loggingIn={loggingIn}
-              setLoggingIn={setLoggingIn}
-              guest={guest}
+          <Routes>
+            <Route
+              index
+              element={
+                <Center
+                  startingIdx={startingIdx}
+                  setStartingIdx={setStartingIdx}
+                  bottom={bottom}
+                  setBottom={setBottom}
+                  update={update}
+                  setUpdate={setUpdate}
+                  loggingIn={loggingIn}
+                  setLoggingIn={setLoggingIn}
+                  logInBackground={logInBackground}
+                  setLogInBackground={setLogInBackground}
+                  scrollTrack={scrollTrack}
+                  setScrollTrack={setScrollTrack}
+                  displayPic={displayPic}
+                  guest={guest}
+                  handle={handle}
+                />
+              }
             />
-          </div>
-        </div>
+            <Route
+              path="profile/*"
+              element={
+                <Profile
+                  startingIdx={startingIdx}
+                  setStartingIdx={setStartingIdx}
+                  bottom={bottom}
+                  setBottom={setBottom}
+                  update={update}
+                  setUpdate={setUpdate}
+                  handle={handle}
+                  loggingIn={loggingIn}
+                  setLoggingIn={setLoggingIn}
+                  guest={guest}
+                  logInBackground={logInBackground}
+                  scrollTrack={scrollTrack}
+                />
+              }
+            />
+          </Routes>
 
-        {/*Search and topics/trends*/}
-        <div className="rightSideBar">
-          <form className="searchForm">
-            <label className="searchLabel">
-              <input
-                className="searchInput"
-                placeholder="Search Twitter"
-                type="text"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                }}
-              />
-            </label>
-          </form>
-          <div className="trendsContainer">
-            <div className="trendsHeader">
-              <h5 className="trendsHeaderText">
-                Topics you may be interested in
-              </h5>
-              <button className="trendSettings" />
-            </div>
-            <TrendContainer setUpdate={setUpdate} update={update} />
-            <div className="showMore">
-              <a href="#">Show more</a>
+          {/*Search and topics/trends*/}
+          <div className="rightSideBar">
+            <form className="searchForm">
+              <label className="searchLabel">
+                <input
+                  className="searchInput"
+                  placeholder="Search Twitter"
+                  type="text"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                  }}
+                />
+              </label>
+            </form>
+            <div className="trendsContainer">
+              <div className="trendsHeader">
+                <h5 className="trendsHeaderText">
+                  Topics you may be interested in
+                </h5>
+                <button className="trendSettings" />
+              </div>
+              <TrendContainer setUpdate={setUpdate} update={update} />
+              <div className="showMore">
+                <a href="#">Show more</a>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </BrowserRouter>
     </div>
   );
 }

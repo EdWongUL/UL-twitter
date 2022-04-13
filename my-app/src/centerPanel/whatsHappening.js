@@ -11,46 +11,18 @@ export default function WhatsHappening(props) {
   const [handleResults, setHandleResults] = useState([]);
   const [recentHandleIdx, setRecentHandleIdx] = useState(-1);
   const [remainingChars, setRemainingChars] = useState(100);
+  const [xycoords, setXycoords] = useState([0, 0]);
 
-  const useDebounce = (value, delay) => {
-    const [debouncedValue, setDebouncedValue] = useState(value);
+  useEffect(() => {
+    const length = text.length;
+    setRemainingChars(maxLength - length);
+    // TODO here we can update do the remaining characters thing
+  }, [text]);
 
-    useEffect(() => {
-      const handler = setTimeout(() => {
-        setDebouncedValue(value);
-      }, delay);
-
-      return () => {
-        clearTimeout(handler);
-      };
-    }, [value]);
-
-    return debouncedValue;
-  };
-
-  const debouncedSearchTerm = useDebounce(handles, 200);
-
-  useEffect(async () => {
-    await fetchResults();
-  }, [debouncedSearchTerm]);
-
-  const fetchResults = async () => {
-    if (handles !== null) {
-      // console.log("fetching with searchHandle: " + handles);
-      const res = await fetch(`http://localhost:3000/private/findUsers/`, {
-        method: "POST",
-        body: JSON.stringify({
-          handles: handles,
-        }),
-        headers: { "Content-Type": "application/json" },
-      });
-
-      const ress = await res.json();
-      console.log(ress);
-      setHandleResults(ress.handles);
-    } else {
-      setHandleResults([]);
-    }
+  const handleLogIn = () => {
+    props.setLoggingIn(true);
+    props.setLogInBackground(true);
+    props.setScrollTrack(false);
   };
 
   const handleClick = async (e) => {
@@ -75,8 +47,6 @@ export default function WhatsHappening(props) {
         props.setStartingIdx(0);
         props.setBottom(false);
         props.setUpdate(true);
-        // .catch(console.log("FAILED TO SEND TO SERVER"));
-        // add a loading icon here?
         console.log("SENDING POST");
       }
     } else {
@@ -84,15 +54,32 @@ export default function WhatsHappening(props) {
     }
   };
 
-  const handleLogIn = () => {
-    props.setLoggingIn(true);
+  const createCopy = (textArea) => {
+    var copy = document.createElement("div");
+    copy.textContent = textArea.value;
+    var style = getComputedStyle(textArea);
+    [
+      "fontFamily",
+      "fontSize",
+      "fontWeight",
+      "wordWrap",
+      "whiteSpace",
+      "borderLeftWidth",
+      "borderTopWidth",
+      "borderRightWidth",
+      "borderBottomWidth",
+    ].forEach(function (key) {
+      copy.style[key] = style[key];
+    });
+    copy.style.overflow = "auto";
+    copy.style.width = textArea.offsetWidth + "px";
+    copy.style.height = textArea.offsetHeight + "px";
+    copy.style.position = "absolute";
+    copy.style.left = textArea.offsetLeft + "px";
+    copy.style.top = textArea.offsetTop + "px";
+    document.body.appendChild(copy);
+    return copy;
   };
-
-  useEffect(() => {
-    const length = text.length;
-    setRemainingChars(maxLength - length);
-    // TODO here we can update do the remaining characters thing
-  }, [text]);
 
   const findSearchHandle = (inString, currentSelection) => {
     // splitting between any not alphanumeric or @
@@ -103,12 +90,38 @@ export default function WhatsHappening(props) {
     for (let i = 0; i < inStringSplit.length; i++) {
       const currentLength = inStringSplit[i].length;
       if (currentLength + cumulativeTotal >= currentSelection) {
-        // TODO change this to return the full word as opposed to just the first letter
-        // ONLY IF it's the @ symbol thing
         if (inStringSplit[i][0] === "@") {
-          return inStringSplit[i].slice(1);
+          // i is the ith string in the input
+          // 0 is the first character of that string
+
+          const input = document.getElementById("whatsHappeningText");
+
+          const start = input.selectionStart;
+          const end = input.selectionEnd;
+          const copy = createCopy(input);
+
+          console.log(input);
+          const range = document.createRange();
+          range.setStart(copy.firstChild, cumulativeTotal - 1);
+          range.setEnd(copy.firstChild, cumulativeTotal);
+          console.log(range);
+          const selection = document.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          console.log(selection);
+          const rect = range.getBoundingClientRect();
+          document.body.removeChild(copy);
+          input.selectionStart = start;
+          input.selectionEnd = end;
+          input.focus();
+
+          console.log(rect);
+          return [
+            inStringSplit[i].slice(1),
+            [rect.left - input.scrollLeft, rect.top - input.scrollTop],
+          ];
         } else {
-          return null;
+          return [null, [0, 0]];
         }
       } else {
         cumulativeTotal += currentLength + 1;
@@ -119,15 +132,22 @@ export default function WhatsHappening(props) {
   const onChange = (e) => {
     setText(e.target.value);
 
+    console.log(e);
+
     // currentSelection is the position of the cursor when the latest key was pressed
     const currentSelection = e.target.selectionStart;
-    // console.log(currentSelection);
 
     // get current word
     const inString = e.target.value;
 
-    const searchHandle = findSearchHandle(inString, currentSelection);
+    const [searchHandle, newcoords] = findSearchHandle(
+      inString,
+      currentSelection
+    );
     setHandles(searchHandle);
+
+    // set new position of the @ symbol thing in setXycoords
+    setXycoords(newcoords);
   };
 
   return (
@@ -138,7 +158,12 @@ export default function WhatsHappening(props) {
       >
         <img className="DP myDP" src={props.displayPic} />
         <div className="whatsHappeningInput">
-          <HandleSearch handleResults={handleResults} />
+          <HandleSearch
+            handleResults={handleResults}
+            handles={handles}
+            setHandleResults={setHandleResults}
+            xycoords={xycoords}
+          />
           <form>
             <textarea
               placeholder="What's happening?"

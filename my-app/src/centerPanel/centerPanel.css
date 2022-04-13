@@ -71,6 +71,7 @@ img.DP.myDP {
 }
 
 .whatsHappeningInput {
+  position: relative;
   grid-area: input;
   box-sizing: border-box;
   /*width: 450px;*/

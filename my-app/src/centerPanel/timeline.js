@@ -50,8 +50,8 @@ export default function Timeline(props) {
   const trackScrolling = () => {
     const wrappedElement = document.getElementById("timeline");
     if (wrappedElement.getBoundingClientRect().bottom <= window.innerHeight) {
-      // only trigger this if bottom hasn't been reached AND we are NOT in the loading screen
-      if (!props.bottom && !props.loggingIn) {
+      // only trigger this if bottom hasn't been reached AND we are NOT in the log in screen
+      if (!props.bottom && !props.loggingIn && props.scrollTrack) {
         props.setStartingIdx(props.startingIdx + 10);
         props.setUpdate(true);
       } else if (props.bottom) {
@@ -63,8 +63,6 @@ export default function Timeline(props) {
   };
 
   useEffect(() => {
-    console.log("UPDATE EFFECT")
-    console.log(props.update)
     if (props.update) {
       props.setUpdate(false);
       getTweets();
@@ -73,7 +71,6 @@ export default function Timeline(props) {
 
   // need to change this if starting idx is not 0, then we append our results onto the current one
   const getTweets = async () => {
-    console.log("GETTING TWEEEEEEEETS");
     const res = await fetch(
       `http://localhost:3000/tweets/${props.startingIdx}`,
       {
@@ -82,7 +79,6 @@ export default function Timeline(props) {
       }
     );
     const results = await res.json();
-    console.log(results);
     if (results.length === 0) {
       props.setBottom(true);
     } else {
@@ -95,7 +91,7 @@ export default function Timeline(props) {
   };
 
   return (
-    <div>
+    <div id="timeline">
       {tweets.map((tweetInfo) => {
         return (
           <Tweet

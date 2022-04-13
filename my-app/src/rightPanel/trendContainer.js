@@ -16,10 +16,7 @@ export default function TrendContainer(props) {
   const [trends, setTrends] = useState("");
 
   useEffect(() => {
-    if (props.update) {
-      getTrends();
-      props.setUpdate(false);
-    }
+    getTrends();
   }, [props.update]);
 
   const getTrends = async () => {
